@@ -1,30 +1,20 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { useFetchGif } from '../hooks/useFetchGif'
+// import { getGif } from '../helper/getGif';
+import { GifGridItem } from './GifGridItem';
 
 export const GifGrid = ({category}) => {
-    // useEffect hace que se ejecute un metodo solo una vez en el compoente
-    useEffect( ()=>{
-        getGif();
-    },[]);
-    const getGif =  async()=>{
-        let url ="https://api.giphy.com/v1/gifs/search?q=goku&limit=10&api_key=OzJy6pHWqXx0KDYhqKGXTlnsYLn2IPKe";
-        const resp = await fetch(url);
-        const  {data}  = await resp.json();
-        
-        const gifs = data.map( img =>{
-            return{
-                id: img.id,
-                title: img.title,
-                url: img.images?.downsized_medium.url
-            };
-        });
-        console.log(gifs)
+    const { data:images, loading } = useFetchGif(category);
 
-    };
-    
-    
     return (
         <>
             <h3>{ category }</h3>
+            { loading && <p className="animate__animated animate__flash">Loading..</p>}
+            <div className="card-grid animate__animated animate__fadeIn">
+                
+                { images.map((img) => <GifGridItem key={img.id} { ...img }/> ) }              
+
+            </div>
         </>
-    )
+    );
 }
